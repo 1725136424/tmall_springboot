@@ -29,8 +29,10 @@
                 list:function(start){
                     let url =  this.uri+ "?start="+start;
                     axios.get(url).then(function(response) {
-                        // vue.pagination = response.data;
-                        vue.beans = response.data;
+                        // 分页数据
+                        vue.pagination = response.data;
+                        // 实体数据
+                        vue.beans = response.data.content;
                     });
                 },
                 add: function () {
