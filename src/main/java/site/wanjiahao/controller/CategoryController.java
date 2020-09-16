@@ -1,10 +1,7 @@
 package site.wanjiahao.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
@@ -34,7 +31,7 @@ public class CategoryController {
     }
 
     @PostMapping("/categories")
-    public Object save(Category category,
+    public RESTFulResult save(Category category,
                        HttpServletRequest request,
                        MultipartFile image) {
         try {
@@ -48,6 +45,20 @@ public class CategoryController {
             e.printStackTrace();
             restFulResult.setSuccess(false);
             restFulResult.setMessage("保存失败");
+        }
+        return restFulResult;
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public RESTFulResult delete(@PathVariable("id") Integer id) {
+        try {
+            categoryService.delete(id);
+            restFulResult.setSuccess(true);
+            restFulResult.setMessage("删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            restFulResult.setSuccess(false);
+            restFulResult.setMessage("删除失败");
         }
         return restFulResult;
     }

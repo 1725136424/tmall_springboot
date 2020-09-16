@@ -21,4 +21,6 @@ public interface CategoryService {
     Page4Navigator<Category> findAll(int start, int size);
 
     Category save(Category category);
+
+    void delete(Integer id);
 }

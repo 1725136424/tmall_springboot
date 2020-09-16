@@ -55,10 +55,9 @@
                         return;
                     let url = this.uri+"/"+id;
                     axios.delete(url).then(function(response){
-                        if(0 !== response.data.length){
-                            alert(response.data);
-                        }
-                        else{
+                        if (response.data.isSuccess) {
+                            alert(response.data.message);
+                        } else {
                             vue.list(0);
                         }
                     });
