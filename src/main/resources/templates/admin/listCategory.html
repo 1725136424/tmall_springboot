@@ -22,9 +22,6 @@
             mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
                 this.list(0);
             },
-            created: function() {
-                console.log(this.beans);
-            },
             methods: {
                 list:function(start){
                     let url =  this.uri+ "?start="+start;
@@ -56,9 +53,9 @@
                 deleteBean: function (id) {
                     if(!checkDeleteLink())
                         return;
-                    var url = this.uri+"/"+id;
+                    let url = this.uri+"/"+id;
                     axios.delete(url).then(function(response){
-                        if(0!=response.data.length){
+                        if(0 !== response.data.length){
                             alert(response.data);
                         }
                         else{

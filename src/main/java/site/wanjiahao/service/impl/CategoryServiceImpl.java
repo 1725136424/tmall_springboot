@@ -42,4 +42,9 @@ public class CategoryServiceImpl implements CategoryService {
     public Page4Navigator<Category> findAll(int start, int size) {
         return findAll(start, size, 3);
     }
+
+    @Override
+    public Category save(Category category) {
+        return categoryMapper.save(category);
+    }
 }
