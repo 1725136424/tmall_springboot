@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
-import site.wanjiahao.pojo.RESTFulResult;
+import site.wanjiahao.pojo.RESTFULResult;
 import site.wanjiahao.service.CategoryService;
 import site.wanjiahao.utils.UploadImageUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 
 @RestController
 public class CategoryController {
@@ -19,7 +20,7 @@ public class CategoryController {
 
     // RESTFul响应结果对象
     @Autowired
-    private RESTFulResult restFulResult;
+    private RESTFULResult restFulResult;
 
     @GetMapping("/categories")
     public Page4Navigator<Category> findAll(@RequestParam(name = "start", defaultValue = "0") int start,
@@ -31,9 +32,9 @@ public class CategoryController {
     }
 
     @PostMapping("/categories")
-    public RESTFulResult save(Category category,
-                       HttpServletRequest request,
-                       MultipartFile image) {
+    public RESTFULResult save(Category category,
+                              HttpServletRequest request,
+                              MultipartFile image) {
         try {
             // JPA根据传入实体类的id来调用更新或者保存方法
             Category savedCategory = categoryService.save(category);
@@ -50,7 +51,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/categories/{id}")
-    public RESTFulResult delete(@PathVariable("id") Integer id) {
+    public RESTFULResult delete(@PathVariable("id") Integer id) {
         try {
             categoryService.delete(id);
             restFulResult.setSuccess(true);
@@ -59,6 +60,32 @@ public class CategoryController {
             e.printStackTrace();
             restFulResult.setSuccess(false);
             restFulResult.setMessage("删除失败");
+        }
+        return restFulResult;
+    }
+
+    @GetMapping("/categories/{id}")
+    public Category findOne(@PathVariable("id") Integer id) {
+        return categoryService.findOne(id);
+    }
+
+    @PutMapping("/categories")
+    public RESTFULResult update(Category category,
+                                MultipartFile image,
+                                HttpServletRequest request) throws IOException {
+        try {
+            // 更新实体
+            Category updateCategory = categoryService.update(category);
+            if (image != null) {
+                // 更新图片
+                UploadImageUtil.uploadImageAndChange2Jpg(updateCategory, request, image);
+            }
+            restFulResult.setSuccess(true);
+            restFulResult.setMessage("修改成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            restFulResult.setSuccess(false);
+            restFulResult.setMessage("修改失败");
         }
         return restFulResult;
     }

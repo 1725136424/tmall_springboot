@@ -13,6 +13,7 @@ import site.wanjiahao.pojo.Page4Navigator;
 import site.wanjiahao.service.CategoryService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -51,5 +52,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void delete(Integer id) {
         categoryMapper.deleteById(id);
+    }
+
+    @Override
+    public Category findOne(Integer id) {
+        return categoryMapper.findById(id).get();
+    }
+
+    @Override
+    public Category update(Category category) {
+        return categoryMapper.save(category);
     }
 }

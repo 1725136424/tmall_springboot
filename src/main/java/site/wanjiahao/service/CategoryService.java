@@ -23,4 +23,8 @@ public interface CategoryService {
     Category save(Category category);
 
     void delete(Integer id);
+
+    Category findOne(Integer id);
+
+    Category update(Category category);
 }

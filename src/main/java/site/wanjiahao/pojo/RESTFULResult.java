@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RESTFulResult {
+public class RESTFULResult {
 
     private boolean isSuccess;
 
