@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:include="include/admin/adminHeader::html('编辑分类')" ></head>
+<head th:include="include/admin/adminHeader::html('编辑属性')" ></head>
 <body>
 <div th:replace="include/admin/adminNavigator::html" ></div>
 <script>
     $(function(){
         var data4Vue = {
-            uri: 'categories',
-            listURL:'admin_category_list',
-            bean: { id: 0, name: '', hp: '0'},
-            file:''
+            uri: 'properties',
+            listURL:'admin_property_list',
+            bean: '',
+            category:''
         };
 
         //ViewModel
@@ -26,24 +26,16 @@
                     var url = this.uri+"/"+id;
                     axios.get(url).then(function(response) {
                         vue.bean = response.data;
+                        vue.category = vue.bean.category;
                     })
                 },
                 update:function () {
-                    if(!checkEmpty(this.bean.name, "分类名称"))
+                    if(!checkEmpty(this.bean.name, "属性名称"))
                         return;
-                    let url = this.uri;
-
-                    //axios.js 上传文件要用 formData 这种方式
-                    let formData = new FormData();
-                    formData.append("image", this.file);
-                    formData.append("name", this.bean.name);
-                    formData.append("id", this.bean.id);
-                    axios.put(url,formData).then(function(response){
-                        location.href=vue.listURL;
+                    var url = this.uri;
+                    axios.put(url,vue.bean).then(function(response){
+                        location.href=vue.listURL+"?cid="+vue.category.id;
                     });
-                },
-                getFile: function (event) {
-                    this.file = event.target.files[0];
                 }
             }
         });
@@ -54,22 +46,17 @@
 
     <ol class="breadcrumb">
         <li><a href="admin_category_list">所有分类</a></li>
-        <li class="active">编辑分类</li>
+        <li><a :href="'admin_property_list?cid='+category.id">{{category.name}}</a></li>
+        <li class="active">属性管理</li>
     </ol>
 
     <div class="panel panel-warning editDiv">
-        <div class="panel-heading">编辑分类</div>
+        <div class="panel-heading">编辑属性</div>
         <div class="panel-body">
             <table class="editTable">
                 <tr>
-                    <td>分类名称</td>
-                    <td><input  @keyup.enter="update" v-model.trim="bean.name" type="text" class="form-control"></td>
-                </tr>
-                <tr>
-                    <td>分类图片</td>
-                    <td>
-                        <input id="categoryPic" accept="image/*" type="file" name="image" @change="getFile($event)" />
-                    </td>
+                    <td>属性名称</td>
+                    <td><input  @keyup.enter="update"  v-model.trim="bean.name" type="text" class="form-control"></td>
                 </tr>
                 <tr class="submitTR">
                     <td colspan="2" align="center">

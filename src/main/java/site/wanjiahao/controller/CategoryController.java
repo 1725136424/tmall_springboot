@@ -51,7 +51,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/categories/{id}")
-    public RESTFULResult delete(@PathVariable("id") Integer id) {
+    public RESTFULResult delete(@PathVariable("id") int id) {
         try {
             categoryService.delete(id);
             restFulResult.setSuccess(true);
@@ -65,11 +65,11 @@ public class CategoryController {
     }
 
     @GetMapping("/categories/{id}")
-    public Category findOne(@PathVariable("id") Integer id) {
+    public Category findOne(@PathVariable("id") int id) {
         return categoryService.findOne(id);
     }
 
-    @PutMapping("/categories")
+    @PutMapping("/categories/{id}")
     public RESTFULResult update(Category category,
                                 MultipartFile image,
                                 HttpServletRequest request) throws IOException {
