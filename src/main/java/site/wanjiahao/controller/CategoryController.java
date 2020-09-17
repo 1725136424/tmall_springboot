@@ -72,7 +72,7 @@ public class CategoryController {
     @PutMapping("/categories/{id}")
     public RESTFULResult update(Category category,
                                 MultipartFile image,
-                                HttpServletRequest request) throws IOException {
+                                HttpServletRequest request) {
         try {
             // 更新实体
             Category updateCategory = categoryService.update(category);
