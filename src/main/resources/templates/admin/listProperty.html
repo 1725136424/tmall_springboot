@@ -52,7 +52,7 @@
                         return;
                     var url = this.uri + "/" + id;
                     axios.delete(url).then(function (response) {
-                        if (response.data.isSuccess)
+                        if (response.data.success)
                             vue.list(0);
                         else
                             alert(response.data.message)

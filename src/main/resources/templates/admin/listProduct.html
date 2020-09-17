@@ -60,11 +60,11 @@
                         return;
                     var url = this.uri+"/"+id;
                     axios.delete(url).then(function(response){
-                        if (response.data.isSu)
-                        if(0!=response.data.length)
-                            alert(response.data);
-                        else
+                        if (response.data.success) {
                             vue.list(0);
+                        } else {
+                            alert(response.data.message)
+                        }
                     });
                 },
                 jump: function(page){
