@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.wanjiahao.pojo.Page4Navigator;
 import site.wanjiahao.pojo.Product;
+import site.wanjiahao.pojo.ProductImage;
 import site.wanjiahao.pojo.RESTFULResult;
+import site.wanjiahao.service.ProductImageService;
 import site.wanjiahao.service.ProductService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,9 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
+    private ProductImageService productImageService;
+
+    @Autowired
     private RESTFULResult restfulResult;
 
 
@@ -25,8 +30,9 @@ public class ProductController {
                                         @RequestParam(value = "start", defaultValue = "0") int start,
                                         @RequestParam(value = "size", defaultValue = "5") int size)  {
         start = start<0?0:start;
-
-        return productService.findAll(cid, start, size);
+        Page4Navigator<Product> page = productService.findAll(cid, start, size);
+        productImageService.setFirstProductImages(page.getContent());
+        return page;
     }
 
     @GetMapping("/products/{id}")

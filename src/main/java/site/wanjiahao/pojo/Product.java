@@ -48,5 +48,5 @@ public class Product  implements Serializable {
 
    	// 不会关联属性
    	@Transient
-   	private ProductImage fistProductImage;
+   	private ProductImage firstProductImage;
 }

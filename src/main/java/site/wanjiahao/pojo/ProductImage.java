@@ -26,6 +26,7 @@ public class ProductImage implements Serializable {
 
    	@JoinColumn(name = "pid" )
 	@ManyToOne
+	@JsonBackReference // 解决product.toString 递归调用发生stackOver
 	private Product product;
 
    	@Column(name = "type" )

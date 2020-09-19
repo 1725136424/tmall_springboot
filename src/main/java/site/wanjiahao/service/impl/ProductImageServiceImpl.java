@@ -60,9 +60,9 @@ public class ProductImageServiceImpl implements ProductImageService {
     public void setFirstProductImages(Product product) {
         List<ProductImage> singleImages = listSingleProductImage(product);
         if(!singleImages.isEmpty()) {
-            product.setFistProductImage(singleImages.get(0));
+            product.setFirstProductImage(singleImages.get(0));
         } else {
-            product.setFistProductImage(new ProductImage()); //这样做是考虑到产品还没有来得及设置图片，但是在订单后台管理里查看订单项的对应产品图片。
+            product.setFirstProductImage(new ProductImage()); //这样做是考虑到产品还没有来得及设置图片，但是在订单后台管理里查看订单项的对应产品图片。
         }
 
     }
