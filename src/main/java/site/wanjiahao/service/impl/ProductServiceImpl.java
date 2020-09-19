@@ -14,6 +14,8 @@ import site.wanjiahao.pojo.Product;
 import site.wanjiahao.service.CategoryService;
 import site.wanjiahao.service.ProductService;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ProductServiceImpl implements ProductService {
@@ -38,6 +40,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page4Navigator<Product> findAll(int cid, int start, int size) {
         return findAll(cid, start, size, 5);
+    }
+
+    @Override
+    public List<Product> findByCategory(Category category) {
+        return productMapper.findByCategory(category);
     }
 
     @Override

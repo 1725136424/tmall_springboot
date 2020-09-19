@@ -14,6 +14,8 @@ import site.wanjiahao.pojo.Property;
 import site.wanjiahao.service.CategoryService;
 import site.wanjiahao.service.PropertyService;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class PropertyServiceImpl implements PropertyService {
@@ -44,6 +46,11 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property findOne(int id) {
         return propertyMapper.findById(id).get();
+    }
+
+    @Override
+    public List<Property> findByCategory(Category category) {
+        return propertyMapper.findByCategory(category);
     }
 
     @Override

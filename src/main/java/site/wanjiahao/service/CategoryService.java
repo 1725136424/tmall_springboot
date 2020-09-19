@@ -2,6 +2,7 @@ package site.wanjiahao.service;
 
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
+import site.wanjiahao.pojo.Product;
 
 import java.util.List;
 

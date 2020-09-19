@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Property;
 
+import java.util.List;
+
 public interface PropertyMapper extends JpaRepository<Property, Integer> {
 
     // jpa自定义查询方法
     Page<Property> findByCategory(Category category, Pageable pageable);
 
+    List<Property> findByCategory(Category category);
 }
