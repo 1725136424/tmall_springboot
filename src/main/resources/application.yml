@@ -15,7 +15,7 @@ spring:
     cache: false
   servlet:
     multipart:
-      max-file-size: 100MB # 文件上传最大限制
+      max-file-size: 100MB
       max-request-size: 100MB
   jpa:
-    show-sql: true  # 显示输出sql
+    show-sql: true

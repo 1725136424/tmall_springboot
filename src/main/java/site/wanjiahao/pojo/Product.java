@@ -45,4 +45,8 @@ public class Product  implements Serializable {
 
    	@Column(name = "create_date" )
 	private Date createDate;
+
+   	// 不会关联属性
+   	@Transient
+   	private ProductImage fistProductImage;
 }

@@ -39,7 +39,10 @@ public class CategoryController {
             // JPA根据传入实体类的id来调用更新或者保存方法
             Category savedCategory = categoryService.save(category);
             // 上传图片
-            File uploadPath = UploadImageUtil.uploadImageAndChange2Jpg(savedCategory, request, image);
+            File uploadPath = UploadImageUtil
+                    .uploadImageAndChange2Jpg(savedCategory.getId(),
+                    "static/img/category" ,
+                    image);
             restFulResult.setSuccess(true);
             restFulResult.setMessage("保存成功");
         } catch (Exception e) {
@@ -78,7 +81,11 @@ public class CategoryController {
             Category updateCategory = categoryService.update(category);
             if (image != null) {
                 // 更新图片
-                UploadImageUtil.uploadImageAndChange2Jpg(updateCategory, request, image);
+                // 上传图片
+                File uploadPath = UploadImageUtil
+                        .uploadImageAndChange2Jpg(updateCategory.getId(),
+                                "static/img/category" ,
+                                image);
             }
             restFulResult.setSuccess(true);
             restFulResult.setMessage("修改成功");

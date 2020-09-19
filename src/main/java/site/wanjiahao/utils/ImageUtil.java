@@ -1,5 +1,7 @@
 package site.wanjiahao.utils;
 
+import org.springframework.util.ResourceUtils;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -66,4 +68,17 @@ public class ImageUtil {
         return null;
     }
 
+    public static boolean delete(String path) {
+        try {
+            path =  ResourceUtils.getURL("classpath:").getPath() + path;
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

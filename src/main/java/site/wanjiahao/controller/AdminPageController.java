@@ -40,4 +40,14 @@ public class AdminPageController {
     public String editProduct() {
         return "admin/editProduct";
     }
+
+    @GetMapping("/admin_productImage_list")
+    public String listProductImage() {
+        return "admin/listProductImage";
+    }
+
+    @GetMapping("/admin_productImage_edit")
+    public String editProductImage() {
+        return "admin/editProductImage";
+    }
 }

@@ -14,22 +14,23 @@ public class UploadImageUtil {
 
     /**
      *
-     * @param category 实体类
-     * @param request request
-     * @param file 长传文件流
-     * @return 上传路径
+     * @param id
+     * @param path
+     * @param request
+     * @param file
+     * @return
      * @throws IOException
      */
-    public static File uploadImageAndChange2Jpg(Category category,
-                                                  HttpServletRequest request,
+    public static File uploadImageAndChange2Jpg(int id,
+                                                  String path,
                                                   MultipartFile file) throws IOException {
         // 获取上传路径
-        String realPath = ResourceUtils.getURL("classpath:").getPath() + "static/img/category";
+        String realPath = ResourceUtils.getURL("classpath:").getPath() + path;
         File filePath = new File(realPath);
         if (!filePath.exists()) {
             filePath.mkdirs();
         }
-        String imageName = category.getId() + ".jpg";
+        String imageName = id + ".jpg";
         File imagePath = new File(realPath, imageName);
         file.transferTo(imagePath);
 
