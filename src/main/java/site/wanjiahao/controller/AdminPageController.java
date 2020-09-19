@@ -50,4 +50,9 @@ public class AdminPageController {
     public String editProductImage() {
         return "admin/editPropertyValue";
     }
+
+    @GetMapping("/admin_user_list")
+    public String listUser() {
+        return "admin/listUser";
+    }
 }
