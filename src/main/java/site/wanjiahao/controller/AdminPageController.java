@@ -55,4 +55,9 @@ public class AdminPageController {
     public String listUser() {
         return "admin/listUser";
     }
+
+    @GetMapping("/admin_order_list")
+    public String listOrder() {
+        return "admin/listOrder";
+    }
 }
