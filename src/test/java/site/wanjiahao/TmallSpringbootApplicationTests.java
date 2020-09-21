@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.service.CategoryService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @SpringBootTest
@@ -19,5 +21,6 @@ class TmallSpringbootApplicationTests {
         List<Category> categories = categoryService.findAll();
         System.out.println(categories);
     }
+
 
 }

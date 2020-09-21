@@ -12,8 +12,10 @@ import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
 import site.wanjiahao.pojo.Product;
 import site.wanjiahao.service.CategoryService;
+import site.wanjiahao.service.ProductImageService;
 import site.wanjiahao.service.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +27,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ProductImageService productImageService;
 
     @Override
     public Page4Navigator<Product> findAll(int cid, int start, int size, int navigateNums) {
@@ -44,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findByCategory(Category category) {
-        return productMapper.findByCategory(category);
+        return productMapper.findByCategoryOrderByIdDesc(category);
     }
 
     @Override
@@ -65,5 +70,36 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product update(Product product) {
         return productMapper.save(product);
+    }
+
+    @Override
+    public void fill(List<Category> categories) {
+        for (Category category : categories) {
+            fill(category);
+        }
+    }
+
+    @Override
+    public void fill(Category category) {
+        List<Product> products = findByCategory(category);
+        productImageService.setFirstProductImages(products);
+        category.setProducts(products);
+    }
+
+
+    @Override
+    public void fillByRow(List<Category> categories) {
+        int productNumberEachRow = 8;
+        for (Category category : categories) {
+            List<Product> products =  category.getProducts();
+            List<List<Product>> productsByRow =  new ArrayList<>();
+            for (int i = 0; i < products.size(); i+=productNumberEachRow) {
+                int size = i+productNumberEachRow;
+                size= Math.min(size, products.size());
+                List<Product> productsOfEachRow =products.subList(i, size);
+                productsByRow.add(productsOfEachRow);
+            }
+            category.setProductsByRow(productsByRow);
+        }
     }
 }

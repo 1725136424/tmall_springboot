@@ -21,4 +21,10 @@ public interface ProductService {
     void delete(int id);
 
     Product update(Product product);
+
+    void fill(List<Category> categories);
+
+    void fill(Category category);
+
+    void fillByRow(List<Category> categories);
 }

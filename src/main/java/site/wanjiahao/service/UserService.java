@@ -8,4 +8,13 @@ public interface UserService {
     Page4Navigator<User> findAll(int start, int size, int navigateNums);
 
     Page4Navigator<User> findAll(int start, int size);
+
+    boolean isExist(String name);
+
+    User findByName(String name);
+
+    User save(User user);
+
+    User findByUsernameAndPassword(String username, String password);
+
 }

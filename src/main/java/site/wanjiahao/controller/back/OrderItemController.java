@@ -1,4 +1,4 @@
-package site.wanjiahao.controller;
+package site.wanjiahao.controller.back;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;

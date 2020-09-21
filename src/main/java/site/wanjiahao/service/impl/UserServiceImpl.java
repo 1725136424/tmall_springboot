@@ -31,4 +31,25 @@ public class UserServiceImpl implements UserService {
     public Page4Navigator<User> findAll(int start, int size) {
         return findAll(start, size, 5);
     }
+
+    @Override
+    public boolean isExist(String name) {
+        User user = findByName(name);
+        return null != user;
+    }
+
+    @Override
+    public User findByName(String name) {
+        return userMapper.findByUsername(name);
+    }
+
+    @Override
+    public User save(User user) {
+        return userMapper.save(user);
+    }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) {
+        return userMapper.findByUsernameAndPassword(username, password);
+    }
 }

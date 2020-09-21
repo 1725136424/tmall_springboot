@@ -28,4 +28,8 @@ public interface CategoryService {
     Category findOne(Integer id);
 
     Category update(Category category);
+
+    void removeCategoryFromProduct(List<Category> categories);
+
+    void removeCategoryFromProduct(Category category);
 }

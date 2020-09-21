@@ -1,5 +1,6 @@
 package site.wanjiahao.service.impl;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,10 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import site.wanjiahao.mapper.CategoryMapper;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
+import site.wanjiahao.pojo.Product;
 import site.wanjiahao.service.CategoryService;
-
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -21,6 +23,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // 查询所有
     @Override
@@ -62,5 +67,36 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category update(Category category) {
         return categoryMapper.save(category);
+    }
+
+    @Override
+    public void removeCategoryFromProduct(List<Category> cs) {
+        for (Category category : cs) {
+            removeCategoryFromProduct(category);
+        }
+    }
+
+    @Override
+    public void removeCategoryFromProduct(Category category) {
+        // 获取session
+        Session session = entityManager.unwrap(Session.class);
+        List<Product> products = category.getProducts();
+        if (null != products) {
+            for (Product product : products) {
+                product.setCategory(null);
+                // 持久 --> 游离
+                session.evict(product);
+            }
+        }
+        List<List<Product>> productsByRow = category.getProductsByRow();
+        if (null != productsByRow) {
+            for (List<Product> ps : productsByRow) {
+                for (Product p : ps) {
+                    p.setCategory(null);
+                    // 持久 --> 游离
+                    session.evict(p);
+                }
+            }
+        }
     }
 }
