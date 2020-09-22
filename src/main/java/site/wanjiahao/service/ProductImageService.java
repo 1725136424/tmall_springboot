@@ -1,5 +1,6 @@
 package site.wanjiahao.service;
 
+import site.wanjiahao.pojo.OrderItem;
 import site.wanjiahao.pojo.Product;
 import site.wanjiahao.pojo.ProductImage;
 
@@ -26,4 +27,6 @@ public interface ProductImageService {
     void setFirstProductImages(Product product);
 
     void setFirstProductImages(List<Product> products);
+
+    void setFirstProductImagesOnOrderItems(List<OrderItem> ois);
 }

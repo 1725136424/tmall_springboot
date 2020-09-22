@@ -1,8 +1,11 @@
 package site.wanjiahao.service;
 
 import site.wanjiahao.pojo.Order;
+import site.wanjiahao.pojo.OrderItem;
 import site.wanjiahao.pojo.Page4Navigator;
+import site.wanjiahao.pojo.User;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
@@ -24,4 +27,12 @@ public interface OrderService {
     Order findOne(int oid);
 
     Order update(Order bean);
+
+    Order save(Order order);
+
+    BigDecimal save(Order order, List<OrderItem> ois);
+
+    List<Order> listByUserWithoutDelete(User user);
+
+    void cacl(Order o);
 }

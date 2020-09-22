@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.wanjiahao.mapper.OrderItemMapper;
-import site.wanjiahao.mapper.ProductImageMapper;
 import site.wanjiahao.pojo.Order;
 import site.wanjiahao.pojo.OrderItem;
 import site.wanjiahao.pojo.Product;
+import site.wanjiahao.pojo.User;
 import site.wanjiahao.service.OrderItemService;
 import site.wanjiahao.service.ProductImageService;
 
@@ -94,5 +94,10 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public List<OrderItem> listByProduct(Product product) {
         return orderItemMapper.findByProduct(product);
+    }
+
+    @Override
+    public List<OrderItem> findByUserAndOrderIsNull(User user) {
+        return orderItemMapper.findByUserAndOrderIsNull(user);
     }
 }

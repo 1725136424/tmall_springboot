@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.wanjiahao.mapper.ProductImageMapper;
+import site.wanjiahao.pojo.OrderItem;
 import site.wanjiahao.pojo.Product;
 import site.wanjiahao.pojo.ProductImage;
 import site.wanjiahao.service.ProductImageService;
@@ -72,6 +73,12 @@ public class ProductImageServiceImpl implements ProductImageService {
         for (Product product : products) {
             setFirstProductImages(product);
         }
+    }
 
+    @Override
+    public void setFirstProductImagesOnOrderItems(List<OrderItem> ois) {
+        for (OrderItem orderItem : ois) {
+            setFirstProductImages(orderItem.getProduct());
+        }
     }
 }

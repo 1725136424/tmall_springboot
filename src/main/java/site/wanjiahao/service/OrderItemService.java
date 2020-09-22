@@ -3,6 +3,7 @@ package site.wanjiahao.service;
 import site.wanjiahao.pojo.Order;
 import site.wanjiahao.pojo.OrderItem;
 import site.wanjiahao.pojo.Product;
+import site.wanjiahao.pojo.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,4 +29,5 @@ public interface OrderItemService {
 
     List<OrderItem> listByProduct(Product product);
 
+    List<OrderItem> findByUserAndOrderIsNull(User user);
 }

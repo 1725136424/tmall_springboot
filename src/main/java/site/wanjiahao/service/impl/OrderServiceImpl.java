@@ -11,8 +11,11 @@ import site.wanjiahao.mapper.OrderMapper;
 import site.wanjiahao.pojo.Order;
 import site.wanjiahao.pojo.OrderItem;
 import site.wanjiahao.pojo.Page4Navigator;
+import site.wanjiahao.pojo.User;
+import site.wanjiahao.service.OrderItemService;
 import site.wanjiahao.service.OrderService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderItemService orderItemService;
 
     @Override
     public Page4Navigator<Order> list(int start, int size, int navigatePages) {
@@ -40,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void removeOrderFromOrderItem(Order order) {
-        List<OrderItem> orderItems= order.getOrderItems();
+        List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrder(null);
         }
@@ -54,5 +60,40 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order update(Order bean) {
         return orderMapper.save(bean);
+    }
+
+    @Override
+    public BigDecimal save(Order order, List<OrderItem> ois) {
+        BigDecimal total = BigDecimal.ZERO;
+        save(order);
+        for (OrderItem oi: ois) {
+            oi.setOrder(order);
+            orderItemService.update(oi);
+            total =
+                    total.add(oi.getProduct().getPromotePrice().multiply(BigDecimal.valueOf(oi.getNum())));
+        }
+        return total;
+    }
+
+    @Override
+    public Order save(Order order) {
+        return orderMapper.save(order);
+    }
+
+    @Override
+    public List<Order> listByUserWithoutDelete(User user) {
+        // 查询未删除的订单
+        return orderMapper.findByUserAndStatusNotOrderByIdDesc(user, OrderService.delete);
+    }
+
+    @Override
+    public void cacl(Order o) {
+        List<OrderItem> orderItems = o.getOrderItems();
+        BigDecimal total = BigDecimal.ZERO;
+        for (OrderItem orderItem : orderItems) {
+            total =
+                    total.add(orderItem.getProduct().getPromotePrice().multiply(BigDecimal.valueOf(orderItem.getNum())));
+        }
+        o.setTotal(total);
     }
 }
