@@ -15,4 +15,7 @@ public interface ProductMapper extends JpaRepository<Product, Integer> {
 
     // 查询某个分类下的商品
     List<Product> findByCategoryOrderByIdDesc(Category category);
+
+    // 模糊查询商品
+    List<Product> findByNameLike(String name, Pageable pageable);
 }

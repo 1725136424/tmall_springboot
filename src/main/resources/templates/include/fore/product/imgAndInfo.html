@@ -32,12 +32,12 @@
 
             $(".addCartButton").removeAttr("disabled");
             $(".addCartLink").click(function(){
-                var url = "forecheckLogin";
+                var url = "fore_checkLogin";
                 axios.get(url).then(function(response) {
-                    if(0==response.data.code){
+                    if(response.data.success){
                         var pid = vue.p.id;
                         var num= $(".productNumberSetting").val();
-                        var url =  "foreaddCart?pid="+pid+"&num="+num;
+                        var url =  "fore_addCart?pid="+pid+"&num="+num;
                         axios.get(url).then(function(response) {
                             var result = response.data;
                             if(0==result.code){
@@ -48,19 +48,18 @@
                                 $(".addCartButton").css("color","black")
                             }
                         });
-                    }
-                    else{
+                    } else{
                         $("#loginModal").modal('show');
                     }
                 });
             });
             $(".buyLink").click(function(){
-                var url = "forecheckLogin";
+                var url = "fore_checkLogin";
                 axios.get(url).then(function(response) {
-                    if(0==response.data.code){
+                    if(response.data.success){
                         var pid = vue.p.id;
                         var num= $(".productNumberSetting").val();
-                        var url =  "forebuyone?pid="+pid+"&num="+num;
+                        var url =  "fore_buyone?pid="+pid+"&num="+num;
                         axios.get(url).then(function(response) {
                             var oiid = response.data;
                             location.href="buy?oiid="+oiid;
@@ -74,8 +73,8 @@
             });
 
             $("button.loginSubmitButton").click(function(){
-                var url =  "forelogin";
-                if(0==vue.user.name.length){
+                var url =  "fore_login";
+                if(0 == vue.user.username.length){
                     $("span.errorMessage").html("请输入用户名");
                     $("div.loginErrorMessageDiv").css("visibility","visible");
                     return;
@@ -88,7 +87,7 @@
 
                 axios.post(url,vue.user).then(function(response) {
                     var result = response.data;
-                    if(result.code==0){
+                    if(result.success){
                         location.href="product?pid="+vue.p.id;
                     }
                     else{

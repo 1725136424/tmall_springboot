@@ -3,10 +3,12 @@ package site.wanjiahao.controller.fore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
+import site.wanjiahao.comparator.*;
 import site.wanjiahao.pojo.*;
 import site.wanjiahao.service.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +93,7 @@ public class ForeRESTController {
     }
 
     @GetMapping("/fore_product/{pid}")
-    public Object product(@PathVariable("pid") int pid) {
+    public Map<String, Object> product(@PathVariable("pid") int pid) {
         Product product = productService.findOne(pid);
 
         List<ProductImage> productSingleImages = productImageService.listSingleProductImage(product);
@@ -110,6 +112,63 @@ public class ForeRESTController {
         map.put("reviews", reviews);
 
         return map;
+    }
+
+    @GetMapping("/fore_checkLogin")
+    public RESTFULResult checkLogin(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            restfulResult.setMessage("已登录");
+            restfulResult.setSuccess(true);
+        } else {
+            restfulResult.setMessage("未登录");
+            restfulResult.setSuccess(false);
+        }
+        return restfulResult;
+    }
+
+
+    @GetMapping("fore_category/{cid}")
+    public Object category(@PathVariable int cid,String sort) {
+        Category c = categoryService.findOne(cid);
+        productService.fill(c);
+        productService.setSaleAndReviewNumber(c.getProducts());
+        categoryService.removeCategoryFromProduct(c);
+        if(null!=sort){
+            switch(sort){
+                case "review":
+                    c.getProducts().sort(new ProductReviewComparator());
+                    break;
+                case "date" :
+                    c.getProducts().sort(new ProductDateComparator());
+                    break;
+
+                case "saleCount" :
+                    c.getProducts().sort(new ProductSaleCountComparator());
+                    break;
+
+                case "price":
+                    c.getProducts().sort(new ProductPriceComparator());
+                    break;
+
+                case "all":
+                    c.getProducts().sort(new ProductAllComparator());
+                    break;
+            }
+        }
+
+        return c;
+    }
+
+    @PostMapping("fore_search")
+    public Object search( String keyword){
+        if(null == keyword) {
+            keyword = "";
+        }
+        List<Product> ps= productService.search(keyword,0,20);
+        productImageService.setFirstProductImages(ps);
+        productService.setSaleAndReviewNumber(ps);
+        return ps;
     }
 
 }

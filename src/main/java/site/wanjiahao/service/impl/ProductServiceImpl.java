@@ -95,12 +95,12 @@ public class ProductServiceImpl implements ProductService {
     public void fillByRow(List<Category> categories) {
         int productNumberEachRow = 8;
         for (Category category : categories) {
-            List<Product> products =  category.getProducts();
-            List<List<Product>> productsByRow =  new ArrayList<>();
-            for (int i = 0; i < products.size(); i+=productNumberEachRow) {
-                int size = i+productNumberEachRow;
-                size= Math.min(size, products.size());
-                List<Product> productsOfEachRow =products.subList(i, size);
+            List<Product> products = category.getProducts();
+            List<List<Product>> productsByRow = new ArrayList<>();
+            for (int i = 0; i < products.size(); i += productNumberEachRow) {
+                int size = i + productNumberEachRow;
+                size = Math.min(size, products.size());
+                List<Product> productsOfEachRow = products.subList(i, size);
                 productsByRow.add(productsOfEachRow);
             }
             category.setProductsByRow(productsByRow);
@@ -124,5 +124,13 @@ public class ProductServiceImpl implements ProductService {
         for (Product product : products) {
             setSaleAndReviewNumber(product);
         }
+    }
+
+    @Override
+    public List<Product> search(String keyword, int start, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(start, size, sort);
+        return productMapper.findByNameLike("%" + keyword + "%",
+                pageable);
     }
 }
