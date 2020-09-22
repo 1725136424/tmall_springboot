@@ -1,20 +1,15 @@
 package site.wanjiahao.controller.fore;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
-import site.wanjiahao.pojo.Category;
-import site.wanjiahao.pojo.RESTFULResult;
-import site.wanjiahao.pojo.User;
-import site.wanjiahao.service.CategoryService;
-import site.wanjiahao.service.ProductService;
-import site.wanjiahao.service.UserService;
+import site.wanjiahao.pojo.*;
+import site.wanjiahao.service.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ForeRESTController {
@@ -30,6 +25,15 @@ public class ForeRESTController {
 
     @Autowired
     private RESTFULResult restfulResult;
+
+    @Autowired
+    private ProductImageService productImageService;
+
+    @Autowired
+    private PropertyValueService propertyValueService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/fore_home")
     public List<Category> home() {
@@ -84,6 +88,28 @@ public class ForeRESTController {
             restfulResult.setSuccess(true);
         }
         return restfulResult;
+    }
+
+    @GetMapping("/fore_product/{pid}")
+    public Object product(@PathVariable("pid") int pid) {
+        Product product = productService.findOne(pid);
+
+        List<ProductImage> productSingleImages = productImageService.listSingleProductImage(product);
+        List<ProductImage> productDetailImages = productImageService.listDetailProductImage(product);
+        product.setProductSingleImages(productSingleImages);
+        product.setProductDetailImages(productDetailImages);
+
+        List<PropertyValue> pvs = propertyValueService.list(product);
+        List<Review> reviews = reviewService.findByProduct(product);
+        productService.setSaleAndReviewNumber(product);
+        productImageService.setFirstProductImages(product);
+
+        Map<String,Object> map= new HashMap<>();
+        map.put("product", product);
+        map.put("pvs", pvs);
+        map.put("reviews", reviews);
+
+        return map;
     }
 
 }

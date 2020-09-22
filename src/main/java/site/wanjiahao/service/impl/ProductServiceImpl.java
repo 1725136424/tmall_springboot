@@ -11,9 +11,7 @@ import site.wanjiahao.mapper.ProductMapper;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
 import site.wanjiahao.pojo.Product;
-import site.wanjiahao.service.CategoryService;
-import site.wanjiahao.service.ProductImageService;
-import site.wanjiahao.service.ProductService;
+import site.wanjiahao.service.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +28,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductImageService productImageService;
+
+    @Autowired
+    private OrderItemService orderItemService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @Override
     public Page4Navigator<Product> findAll(int cid, int start, int size, int navigateNums) {
@@ -100,6 +104,25 @@ public class ProductServiceImpl implements ProductService {
                 productsByRow.add(productsOfEachRow);
             }
             category.setProductsByRow(productsByRow);
+        }
+    }
+
+    @Override
+    public void setSaleAndReviewNumber(Product product) {
+        // 设置销售数量
+        int saleCount = orderItemService.findSaleCount(product);
+        product.setSaleCount(saleCount);
+
+        // 设置评价数量
+        int reviewCount = reviewService.findCount(product);
+        product.setReviewCount(reviewCount);
+
+    }
+
+    @Override
+    public void setSaleAndReviewNumber(List<Product> products) {
+        for (Product product : products) {
+            setSaleAndReviewNumber(product);
         }
     }
 }

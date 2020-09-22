@@ -5,6 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Description  
@@ -49,4 +50,16 @@ public class Product  implements Serializable {
    	// 不会关联属性
    	@Transient
    	private ProductImage firstProductImage;
+
+	@Transient
+	private List<ProductImage> productSingleImages;
+
+	@Transient
+	private List<ProductImage> productDetailImages;
+
+	@Transient
+	private int reviewCount;
+
+	@Transient
+	private int saleCount;
 }

@@ -40,4 +40,10 @@ public class ForePageController {
         return "redirect:home";
     }
 
+    @GetMapping("/product")
+    public String product(){
+        return "fore/product";
+    }
+
+
 }

@@ -56,4 +56,43 @@ public class OrderItemServiceImpl implements OrderItemService {
     public List<OrderItem> listByOrder(Order order) {
         return orderItemMapper.findByOrderOrderByIdDesc(order);
     }
+
+    @Override
+    public void update(OrderItem orderItem) {
+        orderItemMapper.save(orderItem);
+    }
+
+    @Override
+    public OrderItem save(OrderItem orderItem) {
+        return orderItemMapper.save(orderItem);
+    }
+
+    @Override
+    public OrderItem findOne(int id) {
+        return orderItemMapper.findById(id).get();
+    }
+
+    @Override
+    public void delete(int id) {
+        orderItemMapper.deleteById(id);
+    }
+
+    @Override
+    public int findSaleCount(Product product) {
+        List<OrderItem> ois =listByProduct(product);
+        int result =0;
+        for (OrderItem oi : ois) {
+            if(null != oi.getOrder()) {
+                if(null != oi.getOrder() && null != oi.getOrder().getPayDate()) {
+                    result+=oi.getNum();
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<OrderItem> listByProduct(Product product) {
+        return orderItemMapper.findByProduct(product);
+    }
 }
