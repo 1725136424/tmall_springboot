@@ -12,6 +12,7 @@ public class PortUtils {
             ServerSocket serverSocket = new ServerSocket(port);
             serverSocket.close();
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
         return true;

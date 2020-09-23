@@ -34,6 +34,9 @@ spring:
       shutdown-timeout: 0
   jpa:
     show-sql: true
+  data:
+    elasticsearch:
+      cluster-nodes: 127.0.0.1:9300
 shiro:
   credentials-matcher:
     hashAlgorithmName: md5

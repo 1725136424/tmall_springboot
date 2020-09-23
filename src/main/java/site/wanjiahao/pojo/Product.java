@@ -3,6 +3,8 @@ package site.wanjiahao.pojo;
 import javax.persistence.*;
 import java.io.Serializable;
 import lombok.Data;
+import org.springframework.data.elasticsearch.annotations.Document;
+
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name ="product")
 @Data
+@Document(indexName = "springboot_tmall")
 public class Product  implements Serializable {
 
 	private static final long serialVersionUID =  195454973913641150L;

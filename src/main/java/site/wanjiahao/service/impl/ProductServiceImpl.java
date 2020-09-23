@@ -1,5 +1,10 @@
 package site.wanjiahao.service.impl;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -8,8 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.wanjiahao.es.ProductESMapper;
 import site.wanjiahao.mapper.ProductMapper;
 import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
@@ -39,6 +47,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private ProductESMapper productESMapper;
 
     @Cacheable(key = "'products-cid-' + #p0 + '-page-' + #p1 + '-' + #p2")
     @Override
@@ -73,18 +84,21 @@ public class ProductServiceImpl implements ProductService {
     @CacheEvict(allEntries = true)
     @Override
     public Product save(Product product) {
+        productESMapper.save(product);
         return productMapper.save(product);
     }
 
     @CacheEvict(allEntries = true)
     @Override
     public void delete(int id) {
+        productESMapper.deleteById(id);
         productMapper.deleteById(id);
     }
 
     @CacheEvict(allEntries = true)
     @Override
     public Product update(Product product) {
+        productESMapper.save(product);
         return productMapper.save(product);
     }
 
@@ -103,7 +117,6 @@ public class ProductServiceImpl implements ProductService {
         productImageService.setFirstProductImages(products);
         category.setProducts(products);
     }
-
 
     @Override
     public void fillByRow(List<Category> categories) {
@@ -128,7 +141,6 @@ public class ProductServiceImpl implements ProductService {
         // 设置销售数量
         int saleCount = orderItemService.findSaleCount(product);
         product.setSaleCount(saleCount);
-
         // 设置评价数量
         int reviewCount = reviewService.findCount(product);
         product.setReviewCount(reviewCount);
@@ -145,9 +157,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> search(String keyword, int start, int size) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        Pageable pageable = PageRequest.of(start, size, sort);
-        return productMapper.findByNameLike("%" + keyword + "%",
-                pageable);
+        // 初始化es数据库
+        initDatabase2ES();
+        // 使用elasticSearch查询
+        TermQueryBuilder queryBuilder = QueryBuilders.termQuery("name", keyword);
+        Sort sort  = Sort.by(Sort.Direction.DESC,"id");
+        Pageable pageable = PageRequest.of(start, size,sort);
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withPageable(pageable)
+                .withQuery(queryBuilder).build();
+        Page<Product> page = productESMapper.search(searchQuery);
+        return page.getContent();
+    }
+
+    private void initDatabase2ES() {
+        Pageable pageable  = PageRequest.of(0, 5);
+        Page<Product> productESMapperAll = productESMapper.findAll(pageable);
+        if (productESMapperAll.getContent().isEmpty()) {
+            List<Product> products = productMapper.findAll();
+            for (Product product : products) {
+                productESMapper.save(product);
+            }
+        }
     }
 }
