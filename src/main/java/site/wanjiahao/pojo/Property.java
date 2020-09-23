@@ -3,12 +3,13 @@ package site.wanjiahao.pojo;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "property")
 @Data
 
-public class Property {
+public class Property implements Serializable {
 
     @Id
     @Column(name = "id")

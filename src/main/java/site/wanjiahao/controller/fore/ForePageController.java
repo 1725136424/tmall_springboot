@@ -1,8 +1,12 @@
 package site.wanjiahao.controller.fore;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.hibernate.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 // 跳转控制器
@@ -35,8 +39,14 @@ public class ForePageController {
     }
 
     @GetMapping("/fore_logout")
-    public String logout(HttpSession session) {
-        session.removeAttribute("user");
+    public String logout(HttpSession session, HttpServletRequest request) {
+        // 获取当前subject对象
+        Subject subject = SecurityUtils.getSubject();
+        // 判断当前是否授权
+        if (subject.isAuthenticated()) {
+            // 退出
+            subject.logout();
+        }
         return "redirect:home";
     }
 

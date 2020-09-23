@@ -1,6 +1,9 @@
 package site.wanjiahao.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@CacheConfig(cacheNames = "orders")
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -28,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderItemService orderItemService;
 
+    @Cacheable(key = "'orders-page-' + #p0 + '-' + #p1")
     @Override
     public Page4Navigator<Order> list(int start, int size, int navigatePages) {
         Sort sort =  Sort.by(Sort.Direction.DESC, "id");
@@ -52,16 +57,19 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Cacheable(key = "'orders-one-' + #p0")
     @Override
     public Order findOne(int oid) {
         return orderMapper.findById(oid).get();
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public Order update(Order bean) {
         return orderMapper.save(bean);
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public BigDecimal save(Order order, List<OrderItem> ois) {
         BigDecimal total = BigDecimal.ZERO;
@@ -75,11 +83,13 @@ public class OrderServiceImpl implements OrderService {
         return total;
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public Order save(Order order) {
         return orderMapper.save(order);
     }
 
+    @Cacheable(key = "'orders-uid-' + #p0.uid")
     @Override
     public List<Order> listByUserWithoutDelete(User user) {
         // 查询未删除的订单

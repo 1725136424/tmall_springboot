@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "category")
 @Data
 //@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
-public class Category {
+public class Category implements Serializable {
 
     @Id
     // 自动增长策略

@@ -17,3 +17,25 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  mvc:
+    servlet:
+      load-on-startup: 1
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0 # 默认数据库
+    jedis:
+      pool:
+        max-active: 10 # 最大连接数
+        max-wait: 1 # 最大阻塞数量 -1代表无限制
+        max-idle: 8 # 最大空闲数量
+        min-idle: 0 # 最小空闲数量
+    lettuce:
+      shutdown-timeout: 0
+  jpa:
+    show-sql: true
+shiro:
+  credentials-matcher:
+    hashAlgorithmName: md5
+    hashIterations: 2
+

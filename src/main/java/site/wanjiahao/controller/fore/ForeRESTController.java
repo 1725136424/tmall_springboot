@@ -1,9 +1,17 @@
 package site.wanjiahao.controller.fore;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import site.wanjiahao.comparator.*;
+import site.wanjiahao.field.RealmConst;
 import site.wanjiahao.pojo.*;
 import site.wanjiahao.service.*;
 import javax.servlet.http.HttpSession;
@@ -41,6 +49,12 @@ public class ForeRESTController {
     @Autowired
     private OrderService orderService;
 
+    @Value("${shiro.credentials-matcher.hashAlgorithmName}")
+    private String hashAlgorithmName;
+
+    @Value("${shiro.credentials-matcher.hashIterations}")
+    private int hashIterations;
+
     @GetMapping("/fore_home")
     public List<Category> home() {
         List<Category> categories = categoryService.findAll();
@@ -64,7 +78,10 @@ public class ForeRESTController {
                 restfulResult.setSuccess(false);
                 return restfulResult;
             }
-            user.setPassword(password);
+            // 加密处理
+            SimpleHash hash = new SimpleHash(hashAlgorithmName, password, RealmConst.SALT,
+                    hashIterations);
+            user.setPassword(hash.toString());
             userService.save(user);
             restfulResult.setMessage("注册成功");
             restfulResult.setSuccess(true);
@@ -77,21 +94,25 @@ public class ForeRESTController {
         }
     }
 
-
     @PostMapping("/fore_login")
     public Object login(@RequestBody User user, HttpSession session) {
         String username =  user.getUsername();
         username = HtmlUtils.htmlEscape(username);
-        User resUser = userService.findByUsernameAndPassword(username, user.getPassword());
-        if(null == resUser){
-            String message ="账号密码错误";
-            restfulResult.setMessage(message);
-            restfulResult.setSuccess(false);
-        }
-        else{
+        Subject subject = SecurityUtils.getSubject();
+        // 创建一个令牌
+        UsernamePasswordToken token = new UsernamePasswordToken(username, user.getPassword());
+        try {
+            subject.login(token);
+            User resUser = userService.findByName(username);
             session.setAttribute("user", resUser);
-            restfulResult.setMessage("登录成功");
             restfulResult.setSuccess(true);
+            restfulResult.setMessage("登录成功");
+        } catch (UnknownAccountException e) {
+            restfulResult.setSuccess(false);
+            restfulResult.setMessage("账号错误");
+        } catch (IncorrectCredentialsException e) {
+            restfulResult.setSuccess(false);
+            restfulResult.setMessage("密码错误");
         }
         return restfulResult;
     }
@@ -120,8 +141,8 @@ public class ForeRESTController {
 
     @GetMapping("/fore_checkLogin")
     public RESTFULResult checkLogin(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        if (user != null) {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
             restfulResult.setMessage("已登录");
             restfulResult.setSuccess(true);
         } else {
@@ -130,7 +151,6 @@ public class ForeRESTController {
         }
         return restfulResult;
     }
-
 
     @GetMapping("fore_category/{cid}")
     public Object category(@PathVariable int cid,String sort) {
@@ -269,7 +289,7 @@ public class ForeRESTController {
         order.setCreateDate(new Date());
         order.setUser(user);
         order.setStatus(OrderService.waitPay);
-        List<OrderItem> ois= (List<OrderItem>)  session.getAttribute("ois");
+        List<OrderItem> ois= (List<OrderItem>) session.getAttribute("ois");
         BigDecimal total = orderService.save(order,ois);
         Map<String,Object> map = new HashMap<>();
         map.put("oid", order.getId());

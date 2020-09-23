@@ -15,4 +15,6 @@ public interface PropertyValueService {
     PropertyValue getByPropertyAndProduct(Product product, Property property);
 
     List<PropertyValue> list(Product product);
+
+    PropertyValue save(PropertyValue propertyValue);
 }

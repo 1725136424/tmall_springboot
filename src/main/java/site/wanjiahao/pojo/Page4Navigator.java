@@ -4,12 +4,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import java.io.Serializable;
 import java.util.List;
 
 // 分页数据显示 封装了JPA page对象
 @Data
 @NoArgsConstructor
-public class Page4Navigator<T> {
+public class Page4Navigator<T> implements Serializable {
 
     // 原生JPA page对象
     Page<T> pageFromJPA;

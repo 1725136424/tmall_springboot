@@ -1,10 +1,10 @@
 package site.wanjiahao.interceptor;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import site.wanjiahao.pojo.User;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -45,8 +45,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         uri = StringUtils.delete(uri, contextPath+"/");
         String page = uri;
         if(begingWith(page, requireAuthPages)){
-            User user = (User) session.getAttribute("user");
-            if(user==null) {
+            Subject subject = SecurityUtils.getSubject();
+            if (!subject.isAuthenticated()) {
                 response.sendRedirect("login");
                 return false;
             }

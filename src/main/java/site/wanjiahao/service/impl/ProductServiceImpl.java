@@ -1,6 +1,9 @@
 package site.wanjiahao.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,12 +15,14 @@ import site.wanjiahao.pojo.Category;
 import site.wanjiahao.pojo.Page4Navigator;
 import site.wanjiahao.pojo.Product;
 import site.wanjiahao.service.*;
+import site.wanjiahao.utils.SpringContextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
+@CacheConfig(cacheNames = "products")
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -35,6 +40,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ReviewService reviewService;
 
+    @Cacheable(key = "'products-cid-' + #p0 + '-page-' + #p1 + '-' + #p2")
     @Override
     public Page4Navigator<Product> findAll(int cid, int start, int size, int navigateNums) {
         // 获取分类
@@ -48,29 +54,35 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page4Navigator<Product> findAll(int cid, int start, int size) {
-        return findAll(cid, start, size, 5);
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);
+        return productService.findAll(cid, start, size, 5);
     }
 
+    @Cacheable(key = "'products-cid-' + #p0.id")
     @Override
     public List<Product> findByCategory(Category category) {
         return productMapper.findByCategoryOrderByIdDesc(category);
     }
 
+    @Cacheable(key = "'products-one-' + #p0")
     @Override
     public Product findOne(int id) {
         return productMapper.findById(id).get();
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public Product save(Product product) {
         return productMapper.save(product);
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public void delete(int id) {
         productMapper.deleteById(id);
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public Product update(Product product) {
         return productMapper.save(product);
@@ -78,14 +90,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void fill(List<Category> categories) {
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);
         for (Category category : categories) {
-            fill(category);
+            productService.fill(category);
         }
     }
 
     @Override
     public void fill(Category category) {
-        List<Product> products = findByCategory(category);
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);
+        List<Product> products = productService.findByCategory(category);
         productImageService.setFirstProductImages(products);
         category.setProducts(products);
     }
@@ -109,6 +123,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void setSaleAndReviewNumber(Product product) {
+        OrderItemService orderItemService = SpringContextUtil.getBean(OrderItemService.class);
+        ReviewService reviewService = SpringContextUtil.getBean(ReviewService.class);
         // 设置销售数量
         int saleCount = orderItemService.findSaleCount(product);
         product.setSaleCount(saleCount);
@@ -121,8 +137,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void setSaleAndReviewNumber(List<Product> products) {
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);
         for (Product product : products) {
-            setSaleAndReviewNumber(product);
+            productService.setSaleAndReviewNumber(product);
         }
     }
 
